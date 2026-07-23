@@ -1,0 +1,145 @@
+Organizations:
+  - &OrdererOrg
+    Name: OrdererOrg
+    ID: OrdererMSP
+    MSPDir: ../crypto-config/ordererOrganizations/orderer.recordweb.dev/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererMSP.admin')"
+
+  - &RecordWebOrg
+    Name: RecordWebOrgMSP
+    ID: RecordWebOrgMSP
+    MSPDir: ../crypto-config/peerOrganizations/recordweb.org/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('RecordWebOrgMSP.admin', 'RecordWebOrgMSP.peer', 'RecordWebOrgMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('RecordWebOrgMSP.admin', 'RecordWebOrgMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('RecordWebOrgMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('RecordWebOrgMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.recordweb.org
+        Port: 7051
+
+  - &SwissGovOrg
+    Name: SwissGovOrgMSP
+    ID: SwissGovOrgMSP
+    MSPDir: ../crypto-config/peerOrganizations/swissgov.recordweb.dev/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('SwissGovOrgMSP.admin', 'SwissGovOrgMSP.peer', 'SwissGovOrgMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('SwissGovOrgMSP.admin', 'SwissGovOrgMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('SwissGovOrgMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('SwissGovOrgMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.swissgov.recordweb.dev
+        Port: 9051
+
+Capabilities:
+  Channel: &ChannelCapabilities
+    V2_0: true
+  Orderer: &OrdererCapabilities
+    V2_0: true
+  Application: &ApplicationCapabilities
+    V2_5: true
+
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    LifecycleEndorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+    Endorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+  Capabilities:
+    <<: *ApplicationCapabilities
+
+Orderer: &OrdererDefaults
+  OrdererType: etcdraft
+  Addresses:
+    - orderer.orderer.recordweb.dev:7050
+  EtcdRaft:
+    Consenters:
+      - Host: orderer.orderer.recordweb.dev
+        Port: 7050
+        ClientTLSCert: ../crypto-config/ordererOrganizations/orderer.recordweb.dev/orderers/orderer.orderer.recordweb.dev/tls/server.crt
+        ServerTLSCert: ../crypto-config/ordererOrganizations/orderer.recordweb.dev/orderers/orderer.orderer.recordweb.dev/tls/server.crt
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+  Capabilities:
+    <<: *OrdererCapabilities
+
+Channel: &ChannelDefaults
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ChannelCapabilities
+
+Profiles:
+  RootResolverGenesis:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *RecordWebOrg
+        - *SwissGovOrg

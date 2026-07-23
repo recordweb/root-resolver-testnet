@@ -1,0 +1,11 @@
+# Fabric-generierte Artefakte — werden lokal erzeugt, nicht eingecheckt
+network/crypto-config/
+network/channel-artifacts/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp

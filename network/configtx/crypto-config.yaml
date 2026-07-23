@@ -1,0 +1,22 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: orderer.recordweb.dev
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: RecordWebOrg
+    Domain: recordweb.org
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+
+  - Name: SwissGovOrg
+    Domain: swissgov.recordweb.dev
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1

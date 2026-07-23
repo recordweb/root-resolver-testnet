@@ -1,0 +1,147 @@
+# Hyperledger Fabric Testnetz — Root-Resolver
+# Orgs: RecordWebOrg, SwissGovOrg | Orderer: Single-Node Raft
+# Fabric 2.5 LTS
+
+version: '3.8'
+
+networks:
+  fabric_net:
+    driver: bridge
+
+volumes:
+  orderer_data:
+  peer0_recordweb_data:
+  peer0_swissgov_data:
+
+services:
+
+  orderer.orderer.recordweb.dev:
+    image: hyperledger/fabric-orderer:2.5
+    container_name: orderer.orderer.recordweb.dev
+    environment:
+      - FABRIC_LOGGING_SPEC=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_LISTENPORT=7050
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
+      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+      - ORDERER_ADMIN_TLS_ENABLED=true
+      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7053
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:9443
+      - ORDERER_METRICS_PROVIDER=prometheus
+    volumes:
+      - ./crypto-config/ordererOrganizations/orderer.recordweb.dev/orderers/orderer.orderer.recordweb.dev/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/orderer.recordweb.dev/orderers/orderer.orderer.recordweb.dev/tls:/var/hyperledger/orderer/tls
+      - orderer_data:/var/hyperledger/production/orderer
+    ports:
+      - "7050:7050"
+      - "7053:7053"
+    networks:
+      - fabric_net
+
+  peer0.recordweb.org:
+    image: hyperledger/fabric-peer:2.5
+    container_name: peer0.recordweb.org
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric_net
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_PROFILE_ENABLED=false
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_PEER_ID=peer0.recordweb.org
+      - CORE_PEER_ADDRESS=peer0.recordweb.org:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.recordweb.org:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.recordweb.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.recordweb.org:7051
+      - CORE_PEER_LOCALMSPID=RecordWebOrgMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9444
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - ./crypto-config/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls:/etc/hyperledger/fabric/tls
+      - peer0_recordweb_data:/var/hyperledger/production
+    ports:
+      - "7051:7051"
+    networks:
+      - fabric_net
+
+  peer0.swissgov.recordweb.dev:
+    image: hyperledger/fabric-peer:2.5
+    container_name: peer0.swissgov.recordweb.dev
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric_net
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_PROFILE_ENABLED=false
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_PEER_ID=peer0.swissgov.recordweb.dev
+      - CORE_PEER_ADDRESS=peer0.swissgov.recordweb.dev:9051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.swissgov.recordweb.dev:9052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.swissgov.recordweb.dev:9051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.swissgov.recordweb.dev:9051
+      - CORE_PEER_LOCALMSPID=SwissGovOrgMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9445
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - ./crypto-config/peerOrganizations/swissgov.recordweb.dev/peers/peer0.swissgov.recordweb.dev/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/swissgov.recordweb.dev/peers/peer0.swissgov.recordweb.dev/tls:/etc/hyperledger/fabric/tls
+      - peer0_swissgov_data:/var/hyperledger/production
+    ports:
+      - "9051:9051"
+    networks:
+      - fabric_net
+
+  cli:
+    image: hyperledger/fabric-tools:2.5
+    container_name: fabric-cli
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.recordweb.org:7051
+      - CORE_PEER_LOCALMSPID=RecordWebOrgMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.org/users/Admin@recordweb.org/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto
+      - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+      - ../scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts
+    networks:
+      - fabric_net
+    depends_on:
+      - peer0.recordweb.org
+      - peer0.swissgov.recordweb.dev
+      - orderer.orderer.recordweb.dev
