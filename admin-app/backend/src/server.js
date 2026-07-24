@@ -33,7 +33,8 @@ app.get('/api/health', async (_req, res) => {
   }
 });
 
-// Statisches Frontend (Platzhalter – echtes UI folgt in späterem Schritt).
+// Statisches Frontend: liefert index.html unter / und dashboard.html unter
+// /dashboard.html (Vanilla HTML/CSS/JS aus admin-app/frontend/).
 app.use(express.static(config.frontendDir));
 
 const server = app.listen(config.port, () => {

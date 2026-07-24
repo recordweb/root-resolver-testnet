@@ -3,11 +3,32 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RWP Root-Resolver Admin</title>
+    <title>RWP Root-Resolver Admin – Login</title>
+    <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body>
-    <h1>Backend läuft</h1>
-    <p>Das eigentliche Admin-Frontend folgt in einem späteren Schritt.</p>
-    <p>API-Health-Check: <a href="/api/health">/api/health</a></p>
+  <body class="login-page">
+    <main class="login-card">
+      <h1>RWP Root-Resolver Admin</h1>
+
+      <div class="banner banner-warn" role="alert">
+        <strong>DEMO – keine echte Authentifizierung.</strong>
+        Der eingegebene Wert wird als Registrant-Identität
+        (<code>registeredBy</code>) für Aktionen in dieser Sitzung verwendet.
+      </div>
+
+      <form id="login-form" autocomplete="off">
+        <label for="identity">Root-Resolver-Adresse</label>
+        <input
+          type="text"
+          id="identity"
+          name="identity"
+          placeholder="z.B. CH oder https://resolver.bundesarchiv.admin.ch/rwp/v1"
+          required
+        />
+        <button type="submit" class="btn btn-primary">Anmelden</button>
+      </form>
+    </main>
+
+    <script type="module" src="js/login.js"></script>
   </body>
 </html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RWP Root-Resolver Admin – Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <strong>RWP Root-Resolver Admin</strong>
+      </div>
+      <div class="topbar-right">
+        <span class="identity-label">
+          Identität: <code id="current-identity"></code>
+        </span>
+        <a href="#" id="logout-link">Logout</a>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="banner banner-warn" role="alert">
+        <strong>DEMO</strong> – Aktionen werden im Namen der oben angezeigten
+        Identität (<code>registeredBy</code> / <code>callerMSP</code>) ausgeführt.
+      </div>
+
+      <div class="toolbar">
+        <h1>Namespaces</h1>
+        <div class="toolbar-actions">
+          <button id="reload-btn" class="btn">Neu laden</button>
+          <button id="register-btn" class="btn btn-primary">
+            Neuen Namespace registrieren
+          </button>
+        </div>
+      </div>
+
+      <!-- Globale Statusmeldungen (Erfolg/Fehler). -->
+      <div id="message" class="message hidden" role="status"></div>
+
+      <div id="loading" class="loading">Lade Namespaces …</div>
+
+      <table id="namespaces-table" class="data-table hidden">
+        <thead>
+          <tr>
+            <th>Namespace</th>
+            <th>Resolver-Endpoint</th>
+            <th>Registered By</th>
+            <th>Registered At</th>
+            <th>Endorsed By</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody id="namespaces-body"></tbody>
+      </table>
+
+      <p id="empty-hint" class="hidden muted">
+        Noch keine Namespaces registriert.
+      </p>
+    </main>
+
+    <!-- Dialog: Namespace bearbeiten (resolverEndpoint aktualisieren). -->
+    <dialog id="edit-dialog">
+      <form method="dialog" id="edit-form">
+        <h2>Namespace bearbeiten</h2>
+        <p>Namespace: <code id="edit-namespace"></code></p>
+        <label for="edit-endpoint">Neuer Resolver-Endpoint</label>
+        <input type="url" id="edit-endpoint" required />
+        <p class="dialog-error hidden" id="edit-error"></p>
+        <div class="dialog-actions">
+          <button type="button" class="btn" data-close-dialog="edit-dialog">
+            Abbrechen
+          </button>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Dialog: neuen Namespace registrieren. -->
+    <dialog id="register-dialog">
+      <form method="dialog" id="register-form">
+        <h2>Neuen Namespace registrieren</h2>
+        <label for="register-namespace">Namespace</label>
+        <input type="text" id="register-namespace" required />
+        <label for="register-endpoint">Resolver-Endpoint</label>
+        <input type="url" id="register-endpoint" required />
+        <p class="dialog-error hidden" id="register-error"></p>
+        <div class="dialog-actions">
+          <button type="button" class="btn" data-close-dialog="register-dialog">
+            Abbrechen
+          </button>
+          <button type="submit" class="btn btn-primary">Registrieren</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Dialog: Historie eines Namespace. -->
+    <dialog id="history-dialog">
+      <div>
+        <h2>Historie: <code id="history-namespace"></code></h2>
+        <div id="history-content"></div>
+        <div class="dialog-actions">
+          <button type="button" class="btn" data-close-dialog="history-dialog">
+            Schliessen
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <script type="module" src="js/dashboard.js"></script>
+  </body>
+</html>
