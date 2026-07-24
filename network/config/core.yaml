@@ -1,0 +1,13 @@
+peer:
+  id: cli
+  networkId: dev
+  localMspId: RecordWebOrgMSP
+
+logging:
+  level: info
+
+chaincode:
+  externalBuilders: []
+
+vm:
+  endpoint: unix:///host/var/run/docker.sock

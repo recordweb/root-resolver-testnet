@@ -32,7 +32,7 @@ fabric_invoke() {
     -e CORE_PEER_ADDRESS="${CORE_PEER_ADDRESS}" \
     -e CORE_PEER_MSPCONFIGPATH="${CORE_PEER_MSPCONFIGPATH//${ROOT_DIR}//opt/fabric}" \
     -e CORE_PEER_TLS_ROOTCERT_FILE="${CORE_PEER_TLS_ROOTCERT_FILE//${ROOT_DIR}//opt/fabric}" \
-    -e FABRIC_CFG_PATH=/opt/fabric/network/configtx \
+    -e FABRIC_CFG_PATH=/opt/fabric/network/config \
     hyperledger/fabric-tools:2.5 \
     peer chaincode invoke \
       -o orderer.recordweb.example.com:7050 \
@@ -52,7 +52,7 @@ fabric_query() {
     -e CORE_PEER_ADDRESS="${CORE_PEER_ADDRESS}" \
     -e CORE_PEER_MSPCONFIGPATH="${CORE_PEER_MSPCONFIGPATH//${ROOT_DIR}//opt/fabric}" \
     -e CORE_PEER_TLS_ROOTCERT_FILE="${CORE_PEER_TLS_ROOTCERT_FILE//${ROOT_DIR}//opt/fabric}" \
-    -e FABRIC_CFG_PATH=/opt/fabric/network/configtx \
+    -e FABRIC_CFG_PATH=/opt/fabric/network/config \
     hyperledger/fabric-tools:2.5 \
     peer chaincode query \
       -C "${CHANNEL}" -n "${CC_NAME}" \

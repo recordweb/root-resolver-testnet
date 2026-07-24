@@ -19,8 +19,8 @@ ORDERER_CA="${CRYPTO_DIR}/ordererOrganizations/recordweb.example.com/orderers/or
 PEER0_RWORG_CA="${CRYPTO_DIR}/peerOrganizations/recordweborg.example.com/peers/peer0.recordweborg.example.com/tls/ca.crt"
 PEER0_SWGOV_CA="${CRYPTO_DIR}/peerOrganizations/swissgovorg.example.com/peers/peer0.swissgovorg.example.com/tls/ca.crt"
 
-# FABRIC_CFG_PATH zeigt auf network/configtx (dort liegt core.yaml / configtx.yaml)
-export FABRIC_CFG_PATH="${NETWORK_DIR}/configtx"
+# FABRIC_CFG_PATH zeigt auf network/config (dort liegt core.yaml / configtx.yaml)
+export FABRIC_CFG_PATH="${NETWORK_DIR}/config"
 export CORE_PEER_TLS_ENABLED=true
 
 # Docker-Netzwerkname wie in docker-compose.yml (Verzeichnis "network" → Prefix "network")
@@ -37,12 +37,12 @@ docker run --rm \
   sh -c "go mod tidy && go mod vendor"
 
 # ── 2. Package ────────────────────────────────────────────────────────────────
-# FABRIC_CFG_PATH im Container zeigt auf /opt/fabric/network/configtx
+# FABRIC_CFG_PATH im Container zeigt auf /opt/fabric/network/config
 log "Step 2/6  –  peer lifecycle chaincode package"
 docker run --rm \
   -v "${ROOT_DIR}":/opt/fabric \
   -w /opt/fabric \
-  -e FABRIC_CFG_PATH=/opt/fabric/network/configtx \
+  -e FABRIC_CFG_PATH=/opt/fabric/network/config \
   hyperledger/fabric-tools:2.5 \
   peer lifecycle chaincode package \
     /opt/fabric/"${CC_NAME}.tar.gz" \
@@ -76,7 +76,7 @@ fabric_cmd() {
     -e CORE_PEER_ADDRESS="${CORE_PEER_ADDRESS}" \
     -e CORE_PEER_MSPCONFIGPATH="${CORE_PEER_MSPCONFIGPATH//${ROOT_DIR}//opt/fabric}" \
     -e CORE_PEER_TLS_ROOTCERT_FILE="${CORE_PEER_TLS_ROOTCERT_FILE//${ROOT_DIR}//opt/fabric}" \
-    -e FABRIC_CFG_PATH=/opt/fabric/network/configtx \
+    -e FABRIC_CFG_PATH=/opt/fabric/network/config \
     hyperledger/fabric-tools:2.5 "$@"
 }
 
