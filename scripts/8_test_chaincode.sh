@@ -8,19 +8,26 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 NETWORK_DIR="${ROOT_DIR}/network"
 CRYPTO_DIR="${NETWORK_DIR}/crypto-config"
+
 CC_NAME="namespace-registry"
 CHANNEL="root-resolver"
-DOCKER_NETWORK="$(docker ps --format '{{.Names}}' | grep '^peer0.recordweborg.example.com$' >/dev/null && \
-  docker inspect peer0.recordweborg.example.com --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{end}}')"
-  
-ORDERER_CA_CTR="/opt/fabric/network/crypto-config/ordererOrganizations/recordweb.example.com/orderers/orderer.recordweb.example.com/msp/tlscacerts/tlsca.recordweb.example.com-cert.pem"
-PEER0_RWORG_CA_CTR="/opt/fabric/network/crypto-config/peerOrganizations/recordweborg.example.com/peers/peer0.recordweborg.example.com/tls/ca.crt"
+DOCKER_NETWORK="network_fabric_net"
 
+ORDERER_ADDR="orderer.orderer.recordweb.dev:7050"
+ORDERER_HOST_OVERRIDE="orderer.orderer.recordweb.dev"
+ORDERER_CA_CTR="/opt/fabric/network/crypto-config/ordererOrganizations/orderer.recordweb.dev/orderers/orderer.orderer.recordweb.dev/msp/tlscacerts/tlsca.orderer.recordweb.dev-cert.pem"
+
+PEER0_RWORG_ADDR="peer0.recordweb.org:7051"
+PEER0_RWORG_CA_CTR="/opt/fabric/network/crypto-config/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/ca.crt"
+PEER0_RWORG_ADMIN_MSP="${CRYPTO_DIR}/peerOrganizations/recordweb.org/users/Admin@recordweb.org/msp"
+PEER0_RWORG_CA_HOST="${CRYPTO_DIR}/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/ca.crt"
+
+export FABRIC_CFG_PATH="${NETWORK_DIR}/config"
 export CORE_PEER_TLS_ENABLED=true
 export CORE_PEER_LOCALMSPID="RecordWebOrgMSP"
-export CORE_PEER_ADDRESS="peer0.recordweborg.example.com:7051"
-export CORE_PEER_MSPCONFIGPATH="${CRYPTO_DIR}/peerOrganizations/recordweborg.example.com/users/Admin@recordweborg.example.com/msp"
-export CORE_PEER_TLS_ROOTCERT_FILE="${CRYPTO_DIR}/peerOrganizations/recordweborg.example.com/peers/peer0.recordweborg.example.com/tls/ca.crt"
+export CORE_PEER_ADDRESS="${PEER0_RWORG_ADDR}"
+export CORE_PEER_MSPCONFIGPATH="${PEER0_RWORG_ADMIN_MSP}"
+export CORE_PEER_TLS_ROOTCERT_FILE="${PEER0_RWORG_CA_HOST}"
 
 log()  { echo -e "\033[1;32m[TEST]\033[0m $*"; }
 info() { echo -e "\033[0;36m      $*\033[0m"; }
@@ -36,11 +43,11 @@ fabric_invoke() {
     -e FABRIC_CFG_PATH=/opt/fabric/network/config \
     hyperledger/fabric-tools:2.5 \
     peer chaincode invoke \
-      -o orderer.recordweb.example.com:7050 \
-      --ordererTLSHostnameOverride orderer.recordweb.example.com \
+      -o "${ORDERER_ADDR}" \
+      --ordererTLSHostnameOverride "${ORDERER_HOST_OVERRIDE}" \
       --tls --cafile "${ORDERER_CA_CTR}" \
       -C "${CHANNEL}" -n "${CC_NAME}" \
-      --peerAddresses peer0.recordweborg.example.com:7051 \
+      --peerAddresses "${PEER0_RWORG_ADDR}" \
       --tlsRootCertFiles "${PEER0_RWORG_CA_CTR}" \
       "$@"
 }
@@ -60,7 +67,7 @@ fabric_query() {
       "$@"
 }
 
-# ── Seed: vier PoC-Namespaces ─────────────────────────────────────────────────────
+# ── Seed: vier PoC-Namespaces ──────────────────────────────────────────────────
 log "=== SEED: Registering four PoC namespaces ==="
 ENDORSED='["CH","RecordWeb.org"]'
 
@@ -78,7 +85,7 @@ for NS in "${!NAMESPACES[@]}"; do
   sleep 2
 done
 
-# ── Resolve ──────────────────────────────────────────────────────────────────────
+# ── Resolve ────────────────────────────────────────────────────────────────────
 log ""
 log "=== RESOLVE: querying each namespace ==="
 for NS in "${!NAMESPACES[@]}"; do
@@ -87,14 +94,14 @@ for NS in "${!NAMESPACES[@]}"; do
   info "${RESULT}"
 done
 
-# ── Update ───────────────────────────────────────────────────────────────────────
+# ── Update ─────────────────────────────────────────────────────────────────────
 log ""
 log "=== UPDATE: change endpoint of a3f9e21c ==="
 fabric_invoke \
   -c '{"function":"UpdateResolverEndpoint","Args":["a3f9e21c","https://resolver.v2.bundesarchiv.admin.ch/rwp/v2","CH"]}'
 sleep 2
 
-# ── History ─────────────────────────────────────────────────────────────────────
+# ── History ────────────────────────────────────────────────────────────────────
 log ""
 log "=== HISTORY: GetNamespaceHistory for a3f9e21c (original + update) ==="
 RESULT=$(fabric_query -c '{"function":"GetNamespaceHistory","Args":["a3f9e21c"]}')
