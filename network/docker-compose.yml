@@ -146,3 +146,39 @@ services:
       - peer0.recordweb.org
       - peer0.swissgov.recordweb.dev
       - orderer.orderer.recordweb.dev
+
+  # ── Admin-Webseite ───────────────────────────────────────────────────────────
+  # EIGENSTÄNDIGER Service mit eigenem Image (admin-app/backend/Dockerfile) –
+  # bewusst KEIN Teil eines Peer-Containers. Spricht den Peer über das Fabric
+  # Gateway SDK an; tritt daher demselben fabric_net bei, damit der Container-
+  # Hostname "peer0.recordweb.org" per Docker-DNS auflösbar ist.
+  admin-app:
+    build:
+      context: ../admin-app
+      dockerfile: backend/Dockerfile
+    image: root-resolver-admin-app:latest
+    container_name: admin-app
+    environment:
+      - PORT=3000
+      - CHANNEL_NAME=root-resolver
+      - CHAINCODE_NAME=namespace-registry
+      - PEER_ENDPOINT=peer0.recordweb.org:7051
+      - PEER_HOST_ALIAS=peer0.recordweb.org
+      - MSP_ID=RecordWebOrgMSP
+      # Krypto-Material wird read-only unter /app/crypto gemountet (siehe volumes).
+      - PEER_TLS_CA_PATH=/app/crypto/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/ca.crt
+      - CERT_PATH=/app/crypto/peerOrganizations/recordweb.org/users/Admin@recordweb.org/msp/signcerts/Admin@recordweb.org-cert.pem
+      - KEY_PATH=/app/crypto/peerOrganizations/recordweb.org/users/Admin@recordweb.org/msp/keystore
+      - FRONTEND_DIR=/app/frontend
+    volumes:
+      # cryptogen-Material (network/crypto-config) read-only ins Image.
+      - ./crypto-config:/app/crypto:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - fabric_net
+    depends_on:
+      - peer0.recordweb.org
+      - peer0.swissgov.recordweb.dev
+      - orderer.orderer.recordweb.dev
+    restart: unless-stopped

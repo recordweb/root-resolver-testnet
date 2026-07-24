@@ -78,6 +78,8 @@ export const config = {
   // ── HTTP-Server ────────────────────────────────────────────────────────────
   port: Number(env('PORT', '3000')),
 
-  // Statisch ausgeliefertes Frontend-Verzeichnis (Platzhalter für jetzt).
-  frontendDir: path.join(REPO_ROOT, 'admin-app', 'frontend'),
+  // Statisch ausgeliefertes Frontend-Verzeichnis. Default folgt dem Repo-Layout;
+  // im Docker-Image liegt das Frontend an anderer Stelle und wird per
+  // FRONTEND_DIR überschrieben (z.B. /app/frontend).
+  frontendDir: env('FRONTEND_DIR', path.join(REPO_ROOT, 'admin-app', 'frontend')),
 };
