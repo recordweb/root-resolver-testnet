@@ -43,6 +43,10 @@ docker pull hyperledger/fabric-tools:2.5
 
 ## Netzwerk von Null aufbauen
 
+```bash
+cd /opt/fabric-root-resolver
+```
+
 ### Schritt 1 — Kryptomaterial generieren
 
 ```bash
@@ -98,6 +102,50 @@ bash scripts/6_stop_network.sh
 
 Löscht alle Container und Volumes. `crypto-config/` und `channel-artifacts/`
 bleiben erhalten (Kommentar im Script entfernen zum Löschen).
+
+## Betrieb
+
+### Normale Code-Änderung
+
+```bash
+git commit -m ...
+git push origin main
+```
+
+### Erststart nach frischem Kon
+- Die ersten Script laufen automatisch
+
+```bash
+cd /opt/fabric-root-resolver
+sudo -u deploy bash scripts/4_create_channel.sh
+sudo -u deploy bash scripts/5_verify_network.sh
+```
+
+### Kompletter Netzwerk-Reset
+
+```bash
+cd /opt/fabric-root-resolver
+
+# Netzwerk stoppen und Volumes löschen
+sudo -u deploy bash scripts/6_stop_network.sh
+
+# Generierte Kryptomaterial- und Channel-Artefakte löschen
+sudo rm -rf network/crypto-config
+sudo rm -rf network/channel-artifacts
+
+# Neuestes Repo holen (falls Änderungen an configtx.yaml etc. gemacht wurden)
+sudo -u deploy git pull origin main
+```
+Danach neu pushen/deployen oder alles manuell:
+
+```bash
+cd /opt/fabric-root-resolver
+sudo -u deploy bash scripts/1_generate_crypto.sh
+sudo -u deploy bash scripts/2_generate_channel_artifacts.sh
+sudo -u deploy bash scripts/3_start_network.sh
+sudo -u deploy bash scripts/4_create_channel.sh
+sudo -u deploy bash scripts/5_verify_network.sh
+```
 
 ## Orgs im Testnetz
 
