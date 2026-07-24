@@ -6,6 +6,7 @@ on:
     paths:
       - 'chaincode/**'
       - 'scripts/7_deploy_chaincode.sh'
+  workflow_dispatch:
 
 jobs:
   deploy:
