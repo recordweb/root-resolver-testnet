@@ -6,6 +6,7 @@ version: '3.8'
 
 networks:
   fabric_net:
+    name: fabric_net
     driver: bridge
 
 volumes:
