@@ -99,13 +99,6 @@ for NS in "${!NAMESPACES[@]}"; do
   info "${RESULT}"
 done
 
-# ── Update ─────────────────────────────────────────────────────────────────────
-log ""
-log "=== UPDATE: change endpoint of a3f9e21c ==="
-fabric_invoke \
-  -c '{"function":"UpdateResolverEndpoint","Args":["a3f9e21c","https://resolver.v2.bundesarchiv.admin.ch/rwp/v2","CH"]}'
-sleep 2
-
 # ── History ────────────────────────────────────────────────────────────────────
 log ""
 log "=== HISTORY: GetNamespaceHistory for a3f9e21c (original + update) ==="
