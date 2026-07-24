@@ -11,7 +11,7 @@ CRYPTO_DIR="${NETWORK_DIR}/crypto-config"
 
 CC_NAME="namespace-registry"
 CHANNEL="root-resolver"
-DOCKER_NETWORK="network_fabric_net"
+DOCKER_NETWORK="fabric_net"
 
 ORDERER_ADDR="orderer.orderer.recordweb.dev:7050"
 ORDERER_HOST_OVERRIDE="orderer.orderer.recordweb.dev"
