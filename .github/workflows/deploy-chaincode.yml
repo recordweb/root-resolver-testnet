@@ -22,9 +22,17 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -euo pipefail
+
             cd /opt/fabric-root-resolver
+
+            # Alte root-Dateien aus früheren Docker-Läufen entfernen
+            docker run --rm -v /opt/fabric-root-resolver:/workspace alpine:3.20 \
+              sh -c "rm -rf /workspace/chaincode/namespace-registry/vendor /workspace/namespace-registry.tar.gz"
+
+            # Repo exakt auf GitHub-Stand setzen
             git fetch origin
             git reset --hard origin/main
             git clean -fd
+
             chmod +x scripts/7_deploy_chaincode.sh
             bash scripts/7_deploy_chaincode.sh
