@@ -21,6 +21,11 @@ jobs:
             cd /opt/fabric-root-resolver
 
             git fetch origin
+
+            # Root-eigene Dateien aus früheren Docker-Läufen entfernen (BEVOR git clean)
+            docker run --rm -v /opt/fabric-root-resolver:/workspace alpine:3.20 \
+              sh -c "rm -rf /workspace/chaincode/namespace-registry/vendor /workspace/namespace-registry.tar.gz"
+
             git reset --hard origin/main
             git clean -fd
 
