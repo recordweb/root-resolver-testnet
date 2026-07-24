@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -16,20 +17,12 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            set -euo pipefail
             cd /opt/fabric-root-resolver
 
-            # Repo-Stand holen
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
+            git clean -fd
 
-            # Kryptomaterial und Channel-Artefakte erzeugen falls nicht vorhanden
-            if [ ! -d "network/crypto-config" ] || [ -z "$(ls -A network/crypto-config)" ]; then
-              echo "==> Generiere Kryptomaterial..."
-              bash scripts/1_generate_crypto.sh
-              bash scripts/2_generate_channel_artifacts.sh
-            fi
-
-            # Netzwerk starten / aktualisieren
-            cd network
-            docker compose up -d --build
-
-            echo "==> Deployment abgeschlossen"
+            chmod +x scripts/*.sh
+            bash scripts/0_full_reset.sh --test

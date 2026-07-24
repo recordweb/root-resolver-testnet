@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
 # =============================================================================
-# 0_full_reset.sh – Kompletter, konsistenter Reset von Netzwerk + Chaincode
+# 0_full_reset.sh – Kompletter, konsistenter Reset + Deploy + optional Test
+#
+# Verwendung:
+#   bash scripts/0_full_reset.sh          → Reset + Deploy
+#   bash scripts/0_full_reset.sh --test   → Reset + Deploy + Test
 # =============================================================================
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 NETWORK_DIR="${ROOT_DIR}/network"
+
+RUN_TEST=false
+if [[ "${1:-}" == "--test" ]]; then
+  RUN_TEST=true
+fi
 
 log() { echo -e "\033[1;35m[RESET]\033[0m $*"; }
 
@@ -45,4 +54,9 @@ bash "${SCRIPT_DIR}/5_verify_network.sh"
 log "Step 8/8 – Chaincode deployen"
 bash "${SCRIPT_DIR}/7_deploy_chaincode.sh"
 
-log "✅ Kompletter Reset + Deploy erfolgreich abgeschlossen"
+if [[ "${RUN_TEST}" == "true" ]]; then
+  log "Zusatz – Funktionale Tests ausführen"
+  bash "${SCRIPT_DIR}/8_test_chaincode.sh"
+fi
+
+log "✅ Kompletter Reset + Deploy${RUN_TEST:+ + Test} erfolgreich abgeschlossen"
