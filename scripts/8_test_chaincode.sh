@@ -70,7 +70,7 @@ fabric_query() {
 
 # ── Seed: vier PoC-Namespaces ──────────────────────────────────────────────────
 log "=== SEED: Registering four PoC namespaces ==="
-ENDORSED='["CH","RecordWeb.org"]'
+ENDORSED='[\"CH\",\"RecordWeb.org\"]'
 
 declare -A NAMESPACES
 NAMESPACES["a3f9e21c"]="https://resolver.bundesarchiv.admin.ch/rwp/v1"
