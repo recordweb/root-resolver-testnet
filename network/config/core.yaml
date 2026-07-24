@@ -3,11 +3,54 @@ peer:
   networkId: dev
   localMspId: RecordWebOrgMSP
 
-logging:
-  level: info
+  BCCSP:
+    Default: SW
+    SW:
+      Hash: SHA2
+      Security: 256
+      FileKeyStore:
+        KeyStore:
 
-chaincode:
-  externalBuilders: []
+  mspConfigPath: msp
+
+  tls:
+    enabled: true
+
+  keepalive:
+    minInterval: 60s
+
+  gossip:
+    useLeaderElection: true
+    orgLeader: false
+
+  limits:
+    concurrency:
+      endorserService: 2500
+      deliverService: 2500
 
 vm:
   endpoint: unix:///host/var/run/docker.sock
+  docker:
+    tls:
+      enabled: false
+
+chaincode:
+  builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION)
+  externalBuilders: []
+
+  logging:
+    level: info
+    shim: warning
+    format: '%{color}%{time:2006-01-02 15:04:05.000 MST} [%{module}] %{shortfunc} -> %{level:.4s} %{id:03x}%{color:reset} %{message}'
+
+ledger:
+  state:
+    stateDatabase: goleveldb
+  history:
+    enableHistoryDatabase: true
+
+operations:
+  listenAddress: 127.0.0.1:9443
+
+metrics:
+  provider: disabled

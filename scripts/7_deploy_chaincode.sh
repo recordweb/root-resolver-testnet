@@ -54,6 +54,7 @@ fabric_cmd() {
     -e CORE_PEER_MSPCONFIGPATH="${CORE_PEER_MSPCONFIGPATH//${ROOT_DIR}//opt/fabric}" \
     -e CORE_PEER_TLS_ROOTCERT_FILE="${CORE_PEER_TLS_ROOTCERT_FILE//${ROOT_DIR}//opt/fabric}" \
     -e FABRIC_CFG_PATH=/opt/fabric/network/config \
+    -e FABRIC_LOGGING_SPEC=INFO \
     hyperledger/fabric-tools:2.5 "$@"
 }
 
