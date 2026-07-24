@@ -146,3 +146,25 @@ services:
       - peer0.recordweb.org
       - peer0.swissgov.recordweb.dev
       - orderer.orderer.recordweb.dev
+
+  root-resolver-demo:
+    build:
+      context: ../root-resolver-demo
+      dockerfile: Dockerfile
+    container_name: root-resolver-demo
+    environment:
+      - PEER_ENDPOINT=peer0.recordweb.org:7051
+      - PEER_HOST_ALIAS=peer0.recordweb.org
+      - CHANNEL_NAME=root-resolver
+      - CHAINCODE_NAME=namespace-registry
+      - MSP_ID=RecordWebOrgMSP
+      - CRYPTO_DIR=/crypto/peerOrganizations/recordweb.org
+      - PORT=3000
+    volumes:
+      - ./crypto-config:/crypto:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - fabric_net
+    depends_on:
+      - peer0.recordweb.org  

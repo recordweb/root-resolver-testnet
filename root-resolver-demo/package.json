@@ -1,0 +1,13 @@
+{
+  "name": "root-resolver-demo",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "@hyperledger/fabric-gateway": "^1.4.0",
+    "@grpc/grpc-js": "^1.10.0",
+    "express": "^4.19.2",
+    "node-fetch": "^2.7.0"
+  }
+}

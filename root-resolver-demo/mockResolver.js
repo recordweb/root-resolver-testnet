@@ -1,0 +1,24 @@
+const express = require('express');
+const router = express.Router();
+
+const MOCK_RECORDS = {
+  'did:rwp:a3f9e21c:xyz123': {
+    did: 'did:rwp:a3f9e21c:xyz123',
+    recordEndpoint: 'https://records.bundesarchiv.admin.ch/api/v1/records/xyz123',
+    created: '2026-05-31T14:00:00Z',
+    currentVersion: 'sha256:mock-hash-abc123...',
+    controller: 'did:rwp:a3f9e21c:controller-001',
+    mock: true
+  }
+};
+
+router.get('/rwp/v2/:did', (req, res) => {
+  const did = req.params.did;
+  const record = MOCK_RECORDS[did] || {
+    did, status: 'not-found-in-mock', mock: true,
+    message: 'Kein simulierter Record für diese DID hinterlegt.'
+  };
+  res.json(record);
+});
+
+module.exports = router;
