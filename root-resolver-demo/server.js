@@ -37,14 +37,27 @@ app.get('/api/resolve', async (req, res) => {
       didRecord = await mockRes.json();
     }
 
-    res.json({
-      inputDid: did,
-      extractedNamespace: namespace,
-      chaincodeResult,
-      resolverEndpointCalled: resolverEndpoint,
-      resolverSource,
-      didRecord
-    });
+let fullRecord = null;
+if (didRecord.recordEndpoint) {
+  try {
+    const recordRes = await fetch(didRecord.recordEndpoint, { timeout: 4000 });
+    if (recordRes.ok) {
+      fullRecord = await recordRes.json();
+    }
+  } catch (err) {
+    fullRecord = { error: 'Record konnte nicht geladen werden: ' + err.message };
+  }
+}
+
+res.json({
+  inputDid: did,
+  extractedNamespace: namespace,
+  chaincodeResult,
+  resolverEndpointCalled: resolverEndpoint,
+  resolverSource,
+  didDocument: didRecord,
+  fullRecord
+});
   } catch (err) {
     res.status(500).json({ error: err.message, stack: err.stack });
   }
