@@ -16,13 +16,15 @@ echo "✓ crypto-config/ befüllt"
 
 echo "==> Admin-Zertifikate in msp/admincerts kopieren..."
 
+docker run --rm \
+  -v "$NETWORK_DIR/crypto-config:/crypto" \
+  alpine:3.20 sh -c '
 for ORG in recordweb.org swissgov.recordweb.dev; do
-  ADMIN_SIGNCERT="${NETWORK_DIR}/crypto-config/peerOrganizations/${ORG}/users/Admin@${ORG}/msp/signcerts/Admin@${ORG}-cert.pem"
-  ADMINCERTS_DIR="${NETWORK_DIR}/crypto-config/peerOrganizations/${ORG}/msp/admincerts"
-
-  mkdir -p "${ADMINCERTS_DIR}"
-  cp "${ADMIN_SIGNCERT}" "${ADMINCERTS_DIR}/"
+  mkdir -p /crypto/peerOrganizations/${ORG}/msp/admincerts
+  cp /crypto/peerOrganizations/${ORG}/users/Admin@${ORG}/msp/signcerts/Admin@${ORG}-cert.pem \
+     /crypto/peerOrganizations/${ORG}/msp/admincerts/
   echo "  ✓ ${ORG}: Admin-Cert nach msp/admincerts kopiert"
 done
+'
 
 echo "✓ Admin-Zertifikate erfolgreich propagiert"
