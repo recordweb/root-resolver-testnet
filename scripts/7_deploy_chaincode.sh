@@ -81,12 +81,14 @@ log "Package created: ${ROOT_DIR}/${CC_NAME}.tar.gz"
 
 log "Step 3/6  –  install on RecordWebOrgMSP peer"
 peer_env_rworg
-fabric_cmd peer lifecycle chaincode install /opt/fabric/${CC_NAME}.tar.gz
+fabric_cmd peer lifecycle chaincode install /opt/fabric/${CC_NAME}.tar.gz || \
+  log "  (already installed – continuing)"
 
 log "Step 4/6  –  install on SwissGovOrgMSP peer"
 peer_env_swgov
-fabric_cmd peer lifecycle chaincode install /opt/fabric/${CC_NAME}.tar.gz
-
+fabric_cmd peer lifecycle chaincode install /opt/fabric/${CC_NAME}.tar.gz || \
+  log "  (already installed – continuing)"
+  
 log "Step 5/6  –  query installed → extract package ID"
 peer_env_rworg
 PKG_ID=$(fabric_cmd peer lifecycle chaincode queryinstalled --output json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print([x['package_id'] for x in d['installed_chaincodes'] if x['label']=='${CC_NAME}_${CC_VERSION}'][0])")
