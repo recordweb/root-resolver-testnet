@@ -55,20 +55,20 @@ Bezug: RWP v0.1 Kapitel 12.2 | Konzept: `docs/root-resolver-fabric-concept.md`
 ## Übersicht
 
 ┌─────────────────────────────────────────────────────┐
-│ Hyperledger Fabric Testnetz (Spur A) │
-│ │
-│ ┌──────────────┐ ┌──────────────┐ │
-│ │RecordWebOrg │ │SwissGovOrg │ │
-│ │peer0:7051 │ │peer0:9051 │ │
-│ └──────────────┘ └──────────────┘ │
-│ │
-│ ┌──────────────────────────────┐ │
-│ │ Orderer (Single-Node Raft) │ │
-│ │ :7050 (gRPC) | :7053 (admin) │ │
-│ └──────────────────────────────┘ │
-│ │
-│ Channel: root-resolver │
-│ Chaincode: namespace-registry (→ nächster Chat) │
+│ Hyperledger Fabric Testnetz (Spur A)                │
+│                                                     │
+│ ┌──────────────┐ ┌──────────────┐                   │
+│ │RecordWebOrg  │ │SwissGovOrg   │                   │
+│ │peer0:7051    │ │peer0:9051    │                   │
+│ └──────────────┘ └──────────────┘                   │
+│                                                     │
+│ ┌──────────────────────────────┐                    │
+│ │ Orderer (Single-Node Raft)   │                    │
+│ │ :7050 (gRPC) | :7053 (admin) │                    │
+│ └──────────────────────────────┘                    │
+│                                                     │
+│ Channel: root-resolver                              │
+│ Chaincode: namespace-registry (→ nächster Chat)     │
 └─────────────────────────────────────────────────────┘
 
 
