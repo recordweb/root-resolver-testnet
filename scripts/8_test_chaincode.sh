@@ -10,8 +10,9 @@ NETWORK_DIR="${ROOT_DIR}/network"
 CRYPTO_DIR="${NETWORK_DIR}/crypto-config"
 CC_NAME="namespace-registry"
 CHANNEL="root-resolver"
-DOCKER_NETWORK="network_default"
-
+DOCKER_NETWORK="$(docker ps --format '{{.Names}}' | grep '^peer0.recordweborg.example.com$' >/dev/null && \
+  docker inspect peer0.recordweborg.example.com --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{end}}')"
+  
 ORDERER_CA_CTR="/opt/fabric/network/crypto-config/ordererOrganizations/recordweb.example.com/orderers/orderer.recordweb.example.com/msp/tlscacerts/tlsca.recordweb.example.com-cert.pem"
 PEER0_RWORG_CA_CTR="/opt/fabric/network/crypto-config/peerOrganizations/recordweborg.example.com/peers/peer0.recordweborg.example.com/tls/ca.crt"
 

@@ -1,11 +1,6 @@
 name: Deploy Chaincode to VPS
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'chaincode/**'
-      - 'scripts/7_deploy_chaincode.sh'
   workflow_dispatch:
 
 jobs:
