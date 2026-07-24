@@ -23,6 +23,8 @@ jobs:
           script: |
             set -euo pipefail
             cd /opt/fabric-root-resolver
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
+            git clean -fd
             chmod +x scripts/7_deploy_chaincode.sh
             bash scripts/7_deploy_chaincode.sh
