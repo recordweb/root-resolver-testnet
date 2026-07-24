@@ -70,7 +70,6 @@ fabric_query() {
 
 # ── Seed: vier PoC-Namespaces ──────────────────────────────────────────────────
 log "=== SEED: Registering four PoC namespaces ==="
-ENDORSED='[\"CH\",\"RecordWeb.org\"]'
 
 declare -A NAMESPACES
 NAMESPACES["a3f9e21c"]="https://resolver.bundesarchiv.admin.ch/rwp/v1"
@@ -81,8 +80,13 @@ NAMESPACES["c6cdee0b"]="https://resolver.staatsarchiv.ch/rwp/v1"
 for NS in "${!NAMESPACES[@]}"; do
   ENDPOINT="${NAMESPACES[$NS]}"
   log "  RegisterNamespace: ${NS}  →  ${ENDPOINT}"
-  fabric_invoke \
-    -c "{\"function\":\"RegisterNamespace\",\"Args\":[\"${NS}\",\"${ENDPOINT}\",\"CH\",${ENDORSED}]}"
+  CTOR=$(python3 -c "
+import json
+endorsed = json.dumps(['CH','RecordWeb.org'])
+args = ['RegisterNamespace', '${NS}', '${ENDPOINT}', 'CH', endorsed]
+print(json.dumps({'function': args[0], 'Args': args[1:]}))
+")
+  fabric_invoke -c "${CTOR}"
   sleep 2
 done
 
