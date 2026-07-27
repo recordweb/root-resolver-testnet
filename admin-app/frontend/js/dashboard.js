@@ -63,7 +63,7 @@ async function loadNamespaces() {
   emptyHintEl.classList.add('hidden');
 
   try {
-    const records = await api.get('/api/namespaces');
+    const records = await api.get('api/namespaces');
     renderTable(records ?? []);
   } catch (err) {
     showMessage(`Fehler beim Laden der Namespaces: ${err.message}`, 'error');
@@ -142,7 +142,7 @@ async function onEditSubmit(event) {
     // callerMSP wird automatisch aus der Sitzungs-Identität gesetzt, NICHT als
     // sichtbares Feld. Der Chaincode akzeptiert die Änderung nur, wenn
     // callerMSP == registeredBy des bestehenden Records (sonst 403).
-    await api.put(`/api/namespaces/${encodeURIComponent(namespace)}`, {
+    await api.put(`api/namespaces/${encodeURIComponent(namespace)}`, {
       resolverEndpoint,
       callerMSP: identity,
     });
@@ -173,7 +173,7 @@ async function onRegisterSubmit(event) {
     // "eingeloggte" Identität den registrierenden Akteur. endorsedBy startet
     // mit genau diesem einen Endorser ([identity]); weitere Endorsements
     // entstehen später über den (Multi-Org-)Chaincode-Flow, nicht im UI.
-    await api.post('/api/namespaces', {
+    await api.post('api/namespaces', {
       namespace,
       resolverEndpoint,
       registeredBy: identity,
@@ -196,7 +196,7 @@ async function openHistoryDialog(namespace) {
 
   try {
     const entries = await api.get(
-      `/api/namespaces/${encodeURIComponent(namespace)}/history`,
+      `api/namespaces/${encodeURIComponent(namespace)}/history`,
     );
     renderHistory(content, entries ?? []);
   } catch (err) {
