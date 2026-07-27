@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Record wiederfinden via did:rwp</title></head>
+<body style="font-family: sans-serif; max-width: 700px; margin: 60px auto;">
+  <h2>🔎 Record wiederfinden</h2>
+  <p>Gib eine <b>did:rwp</b>-ID ein. Die Blockchain findet automatisch den richtigen Resolver – egal welche Organisation den Record verwaltet.</p>
+  <input id="didInput" style="width:100%; padding:8px; font-size:1em;" value="did:rwp:a3f9e21c:xyz123" />
+  <button onclick="resolveDid()" style="margin-top:10px; padding:8px 16px;">Record finden</button>
+  <div id="status" style="margin-top:15px; color:#555;"></div>
+  <pre id="output" style="background:#f5f5f5; padding:1em; margin-top:10px; white-space:pre-wrap; display:none;"></pre>
+
+  <script>
+    async function resolveDid() {
+      const did = document.getElementById('didInput').value;
+      const status = document.getElementById('status');
+      const output = document.getElementById('output');
+      status.textContent = '⏳ Suche über Blockchain...';
+      output.style.display = 'none';
+      try {
+        const res = await fetch('api/resolve?did=' + encodeURIComponent(did));
+        const json = await res.json();
+        status.textContent = res.ok
+          ? `✅ Record gefunden via Namespace "${json.extractedNamespace}" → ${json.resolverEndpointCalled}`
+          : '❌ Fehler';
+        output.textContent = JSON.stringify(json, null, 2);
+        output.style.display = 'block';
+      } catch (e) {
+        status.textContent = '❌ Fehler: ' + e.message;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -8,6 +8,9 @@ networks:
   fabric_net:
     name: fabric_net
     driver: bridge
+  poc_network:
+    external: true
+    name: poc-fragestunde_poc_network
 
 volumes:
   orderer_data:
@@ -182,3 +185,24 @@ services:
       - peer0.swissgov.recordweb.dev
       - orderer.orderer.recordweb.dev
     restart: unless-stopped
+    
+  root-resolver-demo:
+    build:
+      context: ../root-resolver-demo
+      dockerfile: Dockerfile
+    container_name: root-resolver-demo
+    environment:
+      - PEER_ENDPOINT=peer0.recordweb.org:7051
+      - PEER_HOST_ALIAS=peer0.recordweb.org
+      - CHANNEL_NAME=root-resolver
+      - CHAINCODE_NAME=namespace-registry
+      - MSP_ID=RecordWebOrgMSP
+      - CRYPTO_DIR=/crypto/peerOrganizations/recordweb.org
+      - PORT=3000
+    volumes:
+      - ./crypto-config:/crypto:ro
+    networks:
+      - fabric_net
+      - poc_network
+    depends_on:
+      - peer0.recordweb.org 

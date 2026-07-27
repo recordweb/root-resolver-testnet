@@ -7,7 +7,7 @@ NETWORK_DIR="$SCRIPT_DIR/../network"
 
 echo "==> Netzwerk starten..."
 cd "$NETWORK_DIR"
-docker compose up -d
+docker compose up -d --build
 
 echo "==> Warte 5 Sekunden auf Node-Startup..."
 sleep 5
