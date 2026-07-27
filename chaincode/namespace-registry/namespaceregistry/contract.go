@@ -76,6 +76,36 @@ func (c *NamespaceContract) ResolveNamespace(
     return &record, nil
 }
 
+// ─── GetAllNamespaces ─────────────────────────────────────────────────────────
+
+// GetAllNamespaces returns every NamespaceRecord stored on the ledger.
+// It performs an unbounded range scan over the world state; with the
+// testnet's goleveldb state database this returns all keys in lexical order.
+func (c *NamespaceContract) GetAllNamespaces(
+    ctx contractapi.TransactionContextInterface,
+) ([]*NamespaceRecord, error) {
+    iter, err := ctx.GetStub().GetStateByRange("", "")
+    if err != nil {
+        return nil, fmt.Errorf("failed to get state by range: %w", err)
+    }
+    defer iter.Close()
+
+    records := []*NamespaceRecord{}
+    for iter.HasNext() {
+        kv, err := iter.Next()
+        if err != nil {
+            return nil, fmt.Errorf("error iterating state: %w", err)
+        }
+
+        var record NamespaceRecord
+        if err := json.Unmarshal(kv.Value, &record); err != nil {
+            return nil, fmt.Errorf("failed to unmarshal record %q: %w", kv.Key, err)
+        }
+        records = append(records, &record)
+    }
+    return records, nil
+}
+
 // ─── UpdateResolverEndpoint ───────────────────────────────────────────────────
 
 // UpdateResolverEndpoint updates the resolverEndpoint of an existing namespace.
