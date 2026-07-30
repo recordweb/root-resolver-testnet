@@ -28,3 +28,18 @@ done
 '
 
 echo "✓ Admin-Zertifikate erfolgreich propagiert"
+
+echo "==> Leserechte für nicht-root-Consumer (z.B. admin-app als UID 1000) setzen..."
+# cryptogen läuft im obigen Container als root, alle Dateien landen daher mit
+# 600/Owner-root auf dem Host. Andere Container, die crypto-config read-only
+# mounten und selbst NICHT als root laufen (z.B. admin-app -> USER node),
+# koennten sonst weder TLS-CA-Zertifikate noch private Keys lesen (EACCES).
+# Fuer dieses Testnetz ist weltweit lesbares Kryptomaterial akzeptabel; in
+# einer echten Produktionsumgebung waere stattdessen eine gezielte
+# Gruppenzuordnung (gleiche GID wie die Consumer-Container) vorzuziehen.
+docker run --rm -v "$NETWORK_DIR/crypto-config:/crypto" alpine:3.20 sh -c '
+  find /crypto -type d -exec chmod 755 {} \;
+  find /crypto -type f -exec chmod 644 {} \;
+'
+
+echo "✓ Leserechte gesetzt (Verzeichnisse 755, Dateien 644)"
