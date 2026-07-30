@@ -187,11 +187,11 @@ services:
       - orderer.orderer.recordweb.dev
     restart: unless-stopped
     
-  root-resolver-demo:
+  recordfinder:
     build:
-      context: ../root-resolver-demo
+      context: ../recordfinder
       dockerfile: Dockerfile
-    container_name: root-resolver-demo
+    container_name: recordfinder
     environment:
       - PEER_ENDPOINT=peer0.recordweb.org:7051
       - PEER_HOST_ALIAS=peer0.recordweb.org
