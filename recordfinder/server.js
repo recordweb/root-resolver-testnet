@@ -28,38 +28,47 @@ app.get('/api/resolve', async (req, res) => {
     let resolverSource = 'live';
     try {
       const httpRes = await fetch(`${resolverEndpoint}/${did}`, { timeout: 4000 });
-      if (!httpRes.ok) throw new Error(`HTTP ${httpRes.status}`);
+      // Ein 404 mit JSON-Body ist die gültige Antwort "DID unbekannt" und wird
+      // durchgereicht; nur ein nicht erreichbarer/kaputter Resolver fällt auf den Mock zurück.
       didRecord = await httpRes.json();
+      if (!httpRes.ok) resolverSource = 'live-not-found';
     } catch (err) {
       resolverSource = 'mock-fallback';
-      const mockUrl = `http://localhost:${PORT}/mock-resolver/rwp/v2/${did}`;
+      const mockUrl = `http://localhost:${PORT}/mock-resolver/rwp/v2/${encodeURIComponent(did)}`;
       const mockRes = await fetch(mockUrl);
       didRecord = await mockRes.json();
     }
 
-let fullRecord = null;
-if (didRecord.recordEndpoint) {
-  try {
-    const recordRes = await fetch(didRecord.recordEndpoint, { timeout: 4000 });
-    if (recordRes.ok) {
-      fullRecord = await recordRes.json();
+    let fullRecord = null;
+    if (didRecord.recordEndpoint) {
+      try {
+        const recordRes = await fetch(didRecord.recordEndpoint, { timeout: 4000 });
+        if (recordRes.ok) {
+          fullRecord = await recordRes.json();
+        } else {
+          fullRecord = {
+            error: `Record konnte nicht geladen werden (HTTP ${recordRes.status})`,
+            status: recordRes.status
+          };
+        }
+      } catch (err) {
+        fullRecord = { error: 'Record konnte nicht geladen werden: ' + err.message };
+      }
     }
-  } catch (err) {
-    fullRecord = { error: 'Record konnte nicht geladen werden: ' + err.message };
-  }
-}
 
-res.json({
-  inputDid: did,
-  extractedNamespace: namespace,
-  chaincodeResult,
-  resolverEndpointCalled: resolverEndpoint,
-  resolverSource,
-  didDocument: didRecord,
-  fullRecord
-});
+    res.json({
+      inputDid: did,
+      extractedNamespace: namespace,
+      chaincodeResult,
+      resolverEndpointCalled: resolverEndpoint,
+      recordEndpointCalled: didRecord.recordEndpoint || null,
+      resolverSource,
+      didDocument: didRecord,
+      fullRecord
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message, stack: err.stack });
+    console.error('Auflösung fehlgeschlagen:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 
