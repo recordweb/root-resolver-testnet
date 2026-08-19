@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RecordFinder · RecordWeb PoC</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 16px; color: #1a1a2e; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.05rem; margin: 0 0 10px; }
+  .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .card.payload { border-left: 4px solid #2b8a3e; }
+  .card.payload.empty { border-left-color: #e0a800; }
+  .card.error { border-left: 4px solid #c92a2a; }
+  input { width: 100%; padding: 8px; margin: 6px 0; box-sizing: border-box; font-size: 1em; }
+  button { padding: 8px 16px; cursor: pointer; }
+  .hint { font-size: 0.85rem; color: #666; }
+  .muted { color: #888; }
+  .status { margin-top: 10px; font-size: 0.9rem; color: #444; word-break: break-all; }
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 0.75rem;
+    border: 1px solid #999; background: #f5f5f7; }
+  .badge.draft { border-color: #e0a800; background: #fff8e1; }
+  .badge.finalized { border-color: #2b8a3e; background: #ebfbee; }
+  .meta-table { width: 100%; font-size: 0.85rem; border-collapse: collapse; }
+  .meta-table td { padding: 4px 6px; border-bottom: 1px solid #eee; vertical-align: top; word-break: break-all; }
+  .meta-table td:first-child { font-weight: 600; width: 180px; color: #444; }
+  details.card > summary { cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+  details.card[open] > summary { margin-bottom: 10px; }
+  .step-label { font-weight: 400; color: #666; font-size: 0.8rem; }
+  pre { white-space: pre-wrap; word-break: break-all; font-size: 0.8rem; background: #f0f0f2;
+    padding: 8px; border-radius: 4px; margin: 6px 0 0; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<h1>🔎 RecordFinder</h1>
+<p class="hint">Gib eine <b>did:rwp</b>-ID ein. Die Blockchain findet automatisch den zuständigen
+Resolver – egal welche Organisation den Record verwaltet.</p>
+
+<div class="card">
+  <label class="hint" for="didInput">did:rwp-Identifier</label>
+  <input id="didInput" value="did:rwp:a3f9e21c:xyz123">
+  <button id="resolveBtn">Record finden</button>
+  <div id="status" class="status"></div>
+</div>
+
+<div id="result" class="hidden"></div>
+
+<script>
+const didInput = document.getElementById("didInput");
+const statusEl = document.getElementById("status");
+const resultEl = document.getElementById("result");
+
+function esc(value) {
+  return String(value).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function isBlank(value) {
+  return value === null || value === undefined || value === "";
+}
+
+function didUnknown(didDocument) {
+  return Boolean(didDocument.error) || didDocument.status === "not-found-in-mock";
+}
+
+// Der Record-Endpoint liefert bei Fehlern ein { error }-Objekt statt eines
+// Records; dessen Felder dürfen die Karten nicht füllen.
+function recordFields(record) {
+  return record && !record.error ? record : {};
+}
+
+function jsonBlock(value) {
+  return `<pre>${esc(JSON.stringify(value, null, 2))}</pre>`;
+}
+
+function fmtValue(value) {
+  return typeof value === "object" ? jsonBlock(value) : esc(value);
+}
+
+// Leere Felder werden weggelassen, damit unvollständige Dokumente kein
+// halbleeres Tabellengerüst erzeugen.
+function renderTable(entries) {
+  const rows = entries.filter(([, value]) => !isBlank(value));
+  if (!rows.length) return '<p class="muted">Keine Angaben vorhanden.</p>';
+  return `<table class="meta-table">${rows.map(([label, value]) =>
+    `<tr><td>${esc(label)}</td><td>${fmtValue(value)}</td></tr>`).join("")}</table>`;
+}
+
+function renderJson(value) {
+  if (isBlank(value)) return '<p class="muted">Keine Daten vorhanden.</p>';
+  return jsonBlock(value);
+}
+
+function accordion(title, subtitle, body) {
+  return `<details class="card">
+    <summary>${esc(title)} <span class="step-label">${esc(subtitle)}</span></summary>
+    ${body}
+  </details>`;
+}
+
+function payloadNotice(record, didDocument) {
+  if (record && record.status === 403) {
+    return "Kein Payload vorhanden – der Record ist nicht finalisiert (Draft) und daher nicht öffentlich lesbar.";
+  }
+  if (record && record.error) return record.error;
+  if (!didDocument.recordEndpoint) {
+    return "Kein Payload vorhanden – das DID-Dokument verweist auf keinen Record-Endpoint.";
+  }
+  return "Kein Payload vorhanden (Draft).";
+}
+
+function renderPayloadCard(data) {
+  const payload = recordFields(data.fullRecord).payload;
+  const hasPayload = !isBlank(payload)
+    && !(typeof payload === "object" && !Object.keys(payload).length);
+
+  if (!hasPayload) {
+    return `<div class="card payload empty">
+      <h2>Payload</h2>
+      <p class="muted">${esc(payloadNotice(data.fullRecord, data.didDocument))}</p>
+    </div>`;
+  }
+
+  const body = typeof payload === "object" && !Array.isArray(payload)
+    ? renderTable(Object.entries(payload))
+    : jsonBlock(payload);
+
+  return `<div class="card payload"><h2>Payload</h2>${body}</div>`;
+}
+
+function renderDetailsCard(data) {
+  const rec = recordFields(data.fullRecord);
+  const didDocument = data.didDocument;
+  const badge = rec.state ? ` <span class="badge ${esc(rec.state)}">${esc(rec.state)}</span>` : "";
+
+  return `<div class="card">
+    <h2>Record-Details${badge}</h2>
+    ${renderTable([
+      ["DID", rec.did || didDocument.id || didDocument.did],
+      ["recordType", rec.record_type],
+      ["schemaVersion", rec.schema_version],
+      ["state", rec.state],
+      ["owner", rec.owner || didDocument.controller],
+      ["snapshotHash", rec.snapshot_hash || didDocument.currentVersion],
+      ["created", rec.record_created || rec.created || didDocument.created],
+      ["updated", didDocument.updated],
+      ["finalized", rec.finalized]
+    ])}
+  </div>`;
+}
+
+function renderMetadata(data) {
+  const rec = recordFields(data.fullRecord);
+  const didDocument = data.didDocument;
+
+  return accordion("Technische Metadaten", "alle übrigen Felder", renderTable([
+    ["@context", didDocument["@context"]],
+    ["controller", didDocument.controller],
+    ["currentVersion", didDocument.currentVersion],
+    ["recordEndpoint", didDocument.recordEndpoint],
+    ["verificationMethod", didDocument.verificationMethod],
+    ["parents", rec.parents],
+    ["payloadHash", rec.payload_hash],
+    ["payloadFormat", rec.payload_format],
+    ["signature", rec.signature],
+    ["correctionReason", rec.correction_reason],
+    ["resolverSource", data.resolverSource],
+    ["mock", didDocument.mock]
+  ]));
+}
+
+function renderTrail(data) {
+  const chaincode = data.chaincodeResult || {};
+
+  return `<h2>Auflösungsweg</h2>
+    ${accordion("1 · inputDid", "Eingabe des Nutzers", renderTable([
+      ["inputDid", data.inputDid],
+      ["extractedNamespace", data.extractedNamespace]
+    ]))}
+    ${accordion("2 · Root-Resolver-Chaincode", "namespace-registry · ResolveNamespace", renderTable([
+      ["namespace", chaincode.namespace],
+      ["resolverEndpoint", chaincode.resolverEndpoint],
+      ["registeredBy", chaincode.registeredBy],
+      ["registeredAt", chaincode.registeredAt],
+      ["txId", chaincode.txId],
+      ["endorsedBy", chaincode.endorsedBy]
+    ]))}
+    ${accordion("3 · resolverEndpointCalled", "DID-Dokument abrufen", `
+      ${renderTable([
+        ["resolverEndpointCalled", data.resolverEndpointCalled],
+        ["resolverSource", data.resolverSource]
+      ])}
+      <p class="hint">Antwort (DID-Dokument):</p>
+      ${renderJson(data.didDocument)}
+    `)}
+    ${accordion("4 · recordEndpointCalled", "Record abrufen", `
+      ${renderTable([["recordEndpointCalled", data.recordEndpointCalled]])}
+      <p class="hint">Antwort (Record):</p>
+      ${renderJson(data.fullRecord)}
+    `)}`;
+}
+
+function renderResult(data) {
+  const doc = data.didDocument;
+
+  const head = didUnknown(doc)
+    ? `<div class="card error">
+        <h2>DID beim Resolver unbekannt</h2>
+        <p>${esc(doc.message || doc.error)}</p>
+      </div>`
+    : renderPayloadCard(data) + renderDetailsCard(data);
+
+  resultEl.innerHTML = head + renderMetadata(data) + renderTrail(data);
+  resultEl.classList.remove("hidden");
+}
+
+async function resolveDid() {
+  statusEl.textContent = "⏳ Suche über Blockchain…";
+  resultEl.classList.add("hidden");
+
+  try {
+    const res = await fetch("api/resolve?did=" + encodeURIComponent(didInput.value.trim()));
+    const data = await res.json();
+
+    if (!res.ok) {
+      statusEl.textContent = "❌ Fehler: " + (data.error || `HTTP ${res.status}`);
+      return;
+    }
+
+    // Der Resolver ist eine fremde Gegenstelle; ein leerer Body darf die
+    // Kartenansicht nicht sprengen.
+    data.didDocument = data.didDocument || {};
+
+    statusEl.textContent = `${didUnknown(data.didDocument) ? "⚠️" : "✅"} ` +
+      `Namespace "${data.extractedNamespace}" → ${data.resolverEndpointCalled}`;
+    renderResult(data);
+  } catch (err) {
+    statusEl.textContent = "❌ Fehler: " + err.message;
+  }
+}
+
+document.getElementById("resolveBtn").addEventListener("click", resolveDid);
+didInput.addEventListener("keydown", e => { if (e.key === "Enter") resolveDid(); });
+</script>
+</body>
+</html>

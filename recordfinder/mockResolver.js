@@ -12,8 +12,9 @@ const MOCK_RECORDS = {
   }
 };
 
-router.get('/rwp/v2/:did', (req, res) => {
-  const did = req.params.did;
+// Regex statt ":did", damit DIDs mit Pfadsegmenten (did:rwp:ns:users/name) matchen.
+router.get(/^\/rwp\/v2\/(.+)$/, (req, res) => {
+  const did = decodeURIComponent(req.params[0]);
   const record = MOCK_RECORDS[did] || {
     did, status: 'not-found-in-mock', mock: true,
     message: 'Kein simulierter Record für diese DID hinterlegt.'
