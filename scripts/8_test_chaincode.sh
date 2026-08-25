@@ -78,6 +78,7 @@ NAMESPACES["s73f42a3"]="https://vps.recordweb.dev/sox/did"
 NAMESPACES["f2c81e05"]="https://resolver.recordweb.org/rwp/v1"
 NAMESPACES["c6cdee0b"]="https://resolver.staatsarchiv.ch/rwp/v1"
 NAMESPACES["ba31d45f"]="https://vps.recordweb.dev/bar/did"
+NAMESPACES["a1b2c3d4"]="https://vps.recordweb.dev/tbd/did"
 
 for NS in "${!NAMESPACES[@]}"; do
   ENDPOINT="${NAMESPACES[$NS]}"
