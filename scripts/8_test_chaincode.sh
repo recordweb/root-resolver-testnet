@@ -13,14 +13,14 @@ CC_NAME="namespace-registry"
 CHANNEL="root-resolver"
 DOCKER_NETWORK="fabric_net"
 
-ORDERER_ADDR="orderer.orderer.recordweb.dev:7050"
+ORDERER_ADDR="orderer.orderer.recordweb.dev:7950"
 ORDERER_HOST_OVERRIDE="orderer.orderer.recordweb.dev"
 ORDERER_CA_CTR="/opt/fabric/network/crypto-config/ordererOrganizations/orderer.recordweb.dev/orderers/orderer.orderer.recordweb.dev/msp/tlscacerts/tlsca.orderer.recordweb.dev-cert.pem"
 
-PEER0_RWORG_ADDR="peer0.recordweb.org:7051"
-PEER0_RWORG_CA_CTR="/opt/fabric/network/crypto-config/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/ca.crt"
-PEER0_RWORG_ADMIN_MSP="${CRYPTO_DIR}/peerOrganizations/recordweb.org/users/Admin@recordweb.org/msp"
-PEER0_RWORG_CA_HOST="${CRYPTO_DIR}/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/ca.crt"
+PEER0_RWORG_ADDR="peer0.org.recordweb.dev:7951"
+PEER0_RWORG_CA_CTR="/opt/fabric/network/crypto-config/peerOrganizations/org.recordweb.dev/peers/peer0.org.recordweb.dev/tls/ca.crt"
+PEER0_RWORG_ADMIN_MSP="${CRYPTO_DIR}/peerOrganizations/org.recordweb.dev/users/Admin@org.recordweb.dev/msp"
+PEER0_RWORG_CA_HOST="${CRYPTO_DIR}/peerOrganizations/org.recordweb.dev/peers/peer0.org.recordweb.dev/tls/ca.crt"
 
 export FABRIC_CFG_PATH="${NETWORK_DIR}/config"
 export CORE_PEER_TLS_ENABLED=true
@@ -75,7 +75,7 @@ declare -A NAMESPACES
 NAMESPACES["a3f9e21c"]="https://vps.recordweb.dev/fragenmanagement/did"
 NAMESPACES["b7d4c810"]="https://vps.recordweb.dev/antwortmanagement/did"
 NAMESPACES["s73f42a3"]="https://vps.recordweb.dev/sox/did"
-NAMESPACES["f2c81e05"]="https://resolver.recordweb.org/rwp/v1"
+NAMESPACES["f2c81e05"]="https://resolver.org.recordweb.dev/rwp/v1"
 NAMESPACES["c6cdee0b"]="https://resolver.staatsarchiv.ch/rwp/v1"
 NAMESPACES["ba31d45f"]="https://vps.recordweb.dev/bar/did"
 NAMESPACES["a1b2c3d4"]="https://vps.recordweb.dev/tbd/did"
@@ -85,7 +85,7 @@ for NS in "${!NAMESPACES[@]}"; do
   log "  RegisterNamespace: ${NS}  →  ${ENDPOINT}"
   CTOR=$(python3 -c "
 import json
-endorsed = json.dumps(['CH','RecordWeb.org'])
+endorsed = json.dumps(['CH','Org.RecordWeb.dev'])
 args = ['RegisterNamespace', '${NS}', '${ENDPOINT}', 'CH', endorsed]
 print(json.dumps({'function': args[0], 'Args': args[1:]}))
 ")

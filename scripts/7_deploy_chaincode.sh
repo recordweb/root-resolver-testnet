@@ -14,13 +14,13 @@ CHANNEL="root-resolver"
 
 DOCKER_NETWORK="fabric_net"
 
-ORDERER_ADDR="orderer.orderer.recordweb.dev:7050"
+ORDERER_ADDR="orderer.orderer.recordweb.dev:7950"
 ORDERER_HOST_OVERRIDE="orderer.orderer.recordweb.dev"
 ORDERER_CA="${CRYPTO_DIR}/ordererOrganizations/orderer.recordweb.dev/orderers/orderer.orderer.recordweb.dev/msp/tlscacerts/tlsca.orderer.recordweb.dev-cert.pem"
 
-PEER0_RWORG_ADDR="peer0.recordweb.org:7051"
-PEER0_RWORG_CA="${CRYPTO_DIR}/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/ca.crt"
-PEER0_RWORG_ADMIN_MSP="${CRYPTO_DIR}/peerOrganizations/recordweb.org/users/Admin@recordweb.org/msp"
+PEER0_RWORG_ADDR="peer0.org.recordweb.dev:7951"
+PEER0_RWORG_CA="${CRYPTO_DIR}/peerOrganizations/org.recordweb.dev/peers/peer0.org.recordweb.dev/tls/ca.crt"
+PEER0_RWORG_ADMIN_MSP="${CRYPTO_DIR}/peerOrganizations/org.recordweb.dev/users/Admin@org.recordweb.dev/msp"
 
 PEER0_SWGOV_ADDR="peer0.swissgov.recordweb.dev:9051"
 PEER0_SWGOV_CA="${CRYPTO_DIR}/peerOrganizations/swissgov.recordweb.dev/peers/peer0.swissgov.recordweb.dev/tls/ca.crt"
@@ -144,7 +144,7 @@ fabric_cmd peer lifecycle chaincode commit \
   --sequence "${CC_SEQUENCE}" \
   --signature-policy "${ENDORSEMENT_POLICY}" \
   --peerAddresses "${PEER0_RWORG_ADDR}" \
-  --tlsRootCertFiles "/opt/fabric/network/crypto-config/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/ca.crt" \
+  --tlsRootCertFiles "/opt/fabric/network/crypto-config/peerOrganizations/org.recordweb.dev/peers/peer0.org.recordweb.dev/tls/ca.crt" \
   --peerAddresses "${PEER0_SWGOV_ADDR}" \
   --tlsRootCertFiles "/opt/fabric/network/crypto-config/peerOrganizations/swissgov.recordweb.dev/peers/peer0.swissgov.recordweb.dev/tls/ca.crt"
 

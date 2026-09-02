@@ -4,17 +4,17 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const CRYPTO_DIR = process.env.CRYPTO_DIR || '/crypto/peerOrganizations/recordweb.org';
+const CRYPTO_DIR = process.env.CRYPTO_DIR || '/crypto/peerOrganizations/org.recordweb.dev';
 
 const MSP_ID = process.env.MSP_ID || 'RecordWebOrgMSP';
-const PEER_ENDPOINT = process.env.PEER_ENDPOINT || 'peer0.recordweb.org:7051';
-const PEER_HOST_ALIAS = process.env.PEER_HOST_ALIAS || 'peer0.recordweb.org';
+const PEER_ENDPOINT = process.env.PEER_ENDPOINT || 'peer0.org.recordweb.dev:7951';
+const PEER_HOST_ALIAS = process.env.PEER_HOST_ALIAS || 'peer0.org.recordweb.dev';
 const CHANNEL_NAME = process.env.CHANNEL_NAME || 'root-resolver';
 const CHAINCODE_NAME = process.env.CHAINCODE_NAME || 'namespace-registry';
 
-const TLS_CERT_PATH = path.join(CRYPTO_DIR, 'peers', 'peer0.recordweb.org', 'tls', 'ca.crt');
-const ADMIN_MSP_DIR = path.join(CRYPTO_DIR, 'users', 'Admin@recordweb.org', 'msp');
-const CERT_PATH = path.join(ADMIN_MSP_DIR, 'signcerts', 'Admin@recordweb.org-cert.pem');
+const TLS_CERT_PATH = path.join(CRYPTO_DIR, 'peers', 'peer0.org.recordweb.dev', 'tls', 'ca.crt');
+const ADMIN_MSP_DIR = path.join(CRYPTO_DIR, 'users', 'Admin@org.recordweb.dev', 'msp');
+const CERT_PATH = path.join(ADMIN_MSP_DIR, 'signcerts', 'Admin@org.recordweb.dev-cert.pem');
 const KEY_DIR = path.join(ADMIN_MSP_DIR, 'keystore');
 
 function loadKey() {

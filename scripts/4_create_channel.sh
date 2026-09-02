@@ -18,7 +18,7 @@ docker exec fabric-cli osnadmin channel join \
 
 echo "✓ Orderer joint den Channel"
 
-echo "==> peer0.recordweb.org joint den Channel..."
+echo "==> peer0.org.recordweb.dev joint den Channel..."
 docker exec fabric-cli peer channel join \
   -b /opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts/genesis.block
 

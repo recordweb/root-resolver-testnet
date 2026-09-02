@@ -17,7 +17,7 @@ Organizations:
   - &RecordWebOrg
     Name: RecordWebOrgMSP
     ID: RecordWebOrgMSP
-    MSPDir: ../crypto-config/peerOrganizations/recordweb.org/msp
+    MSPDir: ../crypto-config/peerOrganizations/org.recordweb.dev/msp
     Policies:
       Readers:
         Type: Signature
@@ -32,8 +32,8 @@ Organizations:
         Type: Signature
         Rule: "OR('RecordWebOrgMSP.peer')"
     AnchorPeers:
-      - Host: peer0.recordweb.org
-        Port: 7051
+      - Host: peer0.org.recordweb.dev
+        Port: 7951
 
   - &SwissGovOrg
     Name: SwissGovOrgMSP
@@ -54,7 +54,7 @@ Organizations:
         Rule: "OR('SwissGovOrgMSP.peer')"
     AnchorPeers:
       - Host: peer0.swissgov.recordweb.dev
-        Port: 9051
+        Port: 9951
 
 Capabilities:
   Channel: &ChannelCapabilities
@@ -88,11 +88,11 @@ Application: &ApplicationDefaults
 Orderer: &OrdererDefaults
   OrdererType: etcdraft
   Addresses:
-    - orderer.orderer.recordweb.dev:7050
+    - orderer.orderer.recordweb.dev:7950
   EtcdRaft:
     Consenters:
       - Host: orderer.orderer.recordweb.dev
-        Port: 7050
+        Port: 7950
         ClientTLSCert: ../crypto-config/ordererOrganizations/orderer.recordweb.dev/orderers/orderer.orderer.recordweb.dev/tls/server.crt
         ServerTLSCert: ../crypto-config/ordererOrganizations/orderer.recordweb.dev/orderers/orderer.orderer.recordweb.dev/tls/server.crt
   BatchTimeout: 2s

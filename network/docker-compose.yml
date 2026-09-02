@@ -25,7 +25,7 @@ services:
     environment:
       - FABRIC_LOGGING_SPEC=INFO
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
-      - ORDERER_GENERAL_LISTENPORT=7050
+      - ORDERER_GENERAL_LISTENPORT=7950
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
       - ORDERER_GENERAL_TLS_ENABLED=true
@@ -39,7 +39,7 @@ services:
       - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
       - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7053
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7953
       - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:9443
       - ORDERER_METRICS_PROVIDER=prometheus
     volumes:
@@ -47,14 +47,14 @@ services:
       - ./crypto-config/ordererOrganizations/orderer.recordweb.dev/orderers/orderer.orderer.recordweb.dev/tls:/var/hyperledger/orderer/tls
       - orderer_data:/var/hyperledger/production/orderer
     ports:
-      - "7050:7050"
-      - "7053:7053"
+      - "7950:7950"
+      - "7953:7953"
     networks:
       - fabric_net
 
-  peer0.recordweb.org:
+  peer0.recordweb.dev:
     image: hyperledger/fabric-peer:2.5
-    container_name: peer0.recordweb.org
+    container_name: peer0.recordweb.dev
     environment:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric_net
@@ -66,23 +66,23 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_PEER_ID=peer0.recordweb.org
-      - CORE_PEER_ADDRESS=peer0.recordweb.org:7051
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
-      - CORE_PEER_CHAINCODEADDRESS=peer0.recordweb.org:7052
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.recordweb.org:7051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.recordweb.org:7051
+      - CORE_PEER_ID=peer0.recordweb.dev
+      - CORE_PEER_ADDRESS=peer0.recordweb.dev:7951
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7951
+      - CORE_PEER_CHAINCODEADDRESS=peer0.recordweb.dev:7952
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7952
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.recordweb.dev:7951
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.recordweb.dev:7951
       - CORE_PEER_LOCALMSPID=RecordWebOrgMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9444
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
-      - ./crypto-config/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/msp:/etc/hyperledger/fabric/msp
-      - ./crypto-config/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls:/etc/hyperledger/fabric/tls
+      - ./crypto-config/peerOrganizations/recordweb.dev/peers/peer0.recordweb.dev/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/recordweb.dev/peers/peer0.recordweb.dev/tls:/etc/hyperledger/fabric/tls
       - peer0_recordweb_data:/var/hyperledger/production
     ports:
-      - "7051:7051"
+      - "7951:7951"
     networks:
       - fabric_net
 
@@ -130,13 +130,13 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - FABRIC_LOGGING_SPEC=INFO
       - CORE_PEER_ID=cli
-      - CORE_PEER_ADDRESS=peer0.recordweb.org:7051
+      - CORE_PEER_ADDRESS=peer0.recordweb.dev:7951
       - CORE_PEER_LOCALMSPID=RecordWebOrgMSP
       - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/ca.crt
-      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.org/users/Admin@recordweb.org/msp
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.dev/peers/peer0.recordweb.dev/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.dev/peers/peer0.recordweb.dev/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.dev/peers/peer0.recordweb.dev/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.dev/users/Admin@recordweb.dev/msp
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
@@ -146,7 +146,7 @@ services:
     networks:
       - fabric_net
     depends_on:
-      - peer0.recordweb.org
+      - peer0.recordweb.dev
       - peer0.swissgov.recordweb.dev
       - orderer.orderer.recordweb.dev
 
@@ -154,7 +154,7 @@ services:
   # EIGENSTÄNDIGER Service mit eigenem Image (admin-app/backend/Dockerfile) –
   # bewusst KEIN Teil eines Peer-Containers. Spricht den Peer über das Fabric
   # Gateway SDK an; tritt daher demselben fabric_net bei, damit der Container-
-  # Hostname "peer0.recordweb.org" per Docker-DNS auflösbar ist.
+  # Hostname "peer0.recordweb.dev" per Docker-DNS auflösbar ist.
   admin-app:
     build:
       context: ../admin-app
@@ -165,13 +165,13 @@ services:
       - PORT=3000
       - CHANNEL_NAME=root-resolver
       - CHAINCODE_NAME=namespace-registry
-      - PEER_ENDPOINT=peer0.recordweb.org:7051
-      - PEER_HOST_ALIAS=peer0.recordweb.org
+      - PEER_ENDPOINT=peer0.recordweb.dev:7951
+      - PEER_HOST_ALIAS=peer0.recordweb.dev
       - MSP_ID=RecordWebOrgMSP
       # Krypto-Material wird read-only unter /app/crypto gemountet (siehe volumes).
-      - PEER_TLS_CA_PATH=/app/crypto/peerOrganizations/recordweb.org/peers/peer0.recordweb.org/tls/ca.crt
-      - CERT_PATH=/app/crypto/peerOrganizations/recordweb.org/users/Admin@recordweb.org/msp/signcerts/Admin@recordweb.org-cert.pem
-      - KEY_PATH=/app/crypto/peerOrganizations/recordweb.org/users/Admin@recordweb.org/msp/keystore
+      - PEER_TLS_CA_PATH=/app/crypto/peerOrganizations/recordweb.dev/peers/peer0.recordweb.dev/tls/ca.crt
+      - CERT_PATH=/app/crypto/peerOrganizations/recordweb.dev/users/Admin@recordweb.dev/msp/signcerts/Admin@recordweb.dev-cert.pem
+      - KEY_PATH=/app/crypto/peerOrganizations/recordweb.dev/users/Admin@recordweb.dev/msp/keystore
       - FRONTEND_DIR=/app/frontend
     volumes:
       # cryptogen-Material (network/crypto-config) read-only ins Image.
@@ -182,7 +182,7 @@ services:
       - fabric_net
       - poc_network
     depends_on:
-      - peer0.recordweb.org
+      - peer0.recordweb.dev
       - peer0.swissgov.recordweb.dev
       - orderer.orderer.recordweb.dev
     restart: unless-stopped
@@ -193,12 +193,12 @@ services:
       dockerfile: Dockerfile
     container_name: recordfinder
     environment:
-      - PEER_ENDPOINT=peer0.recordweb.org:7051
-      - PEER_HOST_ALIAS=peer0.recordweb.org
+      - PEER_ENDPOINT=peer0.recordweb.dev:7951
+      - PEER_HOST_ALIAS=peer0.recordweb.dev
       - CHANNEL_NAME=root-resolver
       - CHAINCODE_NAME=namespace-registry
       - MSP_ID=RecordWebOrgMSP
-      - CRYPTO_DIR=/crypto/peerOrganizations/recordweb.org
+      - CRYPTO_DIR=/crypto/peerOrganizations/recordweb.dev
       - PORT=3000
     volumes:
       - ./crypto-config:/crypto:ro
@@ -206,4 +206,4 @@ services:
       - fabric_net
       - poc_network
     depends_on:
-      - peer0.recordweb.org 
+      - peer0.recordweb.dev 

@@ -24,7 +24,7 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
 const CRYPTO_ROOT = path.join(REPO_ROOT, 'network', 'crypto-config');
 
 // Admin-Identity + Peer-TLS von RecordWebOrg (peer0.recordweb.org).
-const RWORG = path.join(CRYPTO_ROOT, 'peerOrganizations', 'recordweb.org');
+const RWORG = path.join(CRYPTO_ROOT, 'peerOrganizations', 'org.recordweb.dev');
 
 const env = (key, fallback) => process.env[key] ?? fallback;
 
@@ -36,12 +36,12 @@ export const config = {
   // gRPC-Endpoint des Peers. Im fabric_net-Docker-Netz ist der Container-Name
   // (peer0.recordweb.org) auflösbar; für lokalen Zugriff via Portmapping ggf.
   // auf localhost:7051 setzen (dann PEER_HOST_ALIAS beibehalten!).
-  peerEndpoint: env('PEER_ENDPOINT', 'peer0.recordweb.org:7051'),
+  peerEndpoint: env('PEER_ENDPOINT', 'peer0.org.recordweb.dev:7951'),
 
   // TLS-Servername, gegen den das Peer-Zertifikat validiert wird. Muss dem
   // CN/SAN im Peer-Zertifikat entsprechen (hier der Container-Hostname),
   // auch wenn peerEndpoint auf localhost zeigt (SSH-Tunnel/Portmapping).
-  peerHostAlias: env('PEER_HOST_ALIAS', 'peer0.recordweb.org'),
+  peerHostAlias: env('PEER_HOST_ALIAS', 'peer0.org.recordweb.dev'),
 
   // MSP-ID der Organisation, in deren Namen wir signieren.
   mspId: env('MSP_ID', 'RecordWebOrgMSP'),
@@ -50,7 +50,7 @@ export const config = {
   // TLS-CA-Zertifikat des Peers (zum Aufbau der TLS-Verbindung).
   peerTlsCaPath: env(
     'PEER_TLS_CA_PATH',
-    path.join(RWORG, 'peers', 'peer0.recordweb.org', 'tls', 'ca.crt'),
+    path.join(RWORG, 'peers', 'peer0.org.recordweb.dev', 'tls', 'ca.crt'),
   ),
 
   // X.509-Zertifikat der Admin-Identity (signcert).
@@ -59,10 +59,10 @@ export const config = {
     path.join(
       RWORG,
       'users',
-      'Admin@recordweb.org',
+      'Admin@org.recordweb.dev',
       'msp',
       'signcerts',
-      'Admin@recordweb.org-cert.pem',
+      'Admin@org.recordweb.dev-cert.pem',
     ),
   ),
 
@@ -72,7 +72,7 @@ export const config = {
   // ebenfalls akzeptiert.
   keyPath: env(
     'KEY_PATH',
-    path.join(RWORG, 'users', 'Admin@recordweb.org', 'msp', 'keystore'),
+    path.join(RWORG, 'users', 'Admin@org.recordweb.dev', 'msp', 'keystore'),
   ),
 
   // ── HTTP-Server ────────────────────────────────────────────────────────────

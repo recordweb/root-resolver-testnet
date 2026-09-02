@@ -8,11 +8,11 @@ echo "==> Laufende Container:"
 docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
 
 echo ""
-echo "==> Channel-Info (peer0.recordweb.org):"
+echo "==> Channel-Info (peer0.org.recordweb.dev):"
 docker exec fabric-cli peer channel getinfo -c $CHANNEL_NAME
 
 echo ""
-echo "==> Channel-Liste (peer0.recordweb.org):"
+echo "==> Channel-Liste (peer0.org.recordweb.dev):"
 docker exec fabric-cli peer channel list
 
 echo ""

@@ -6,7 +6,7 @@ OrdererOrgs:
 
 PeerOrgs:
   - Name: RecordWebOrg
-    Domain: recordweb.org
+    Domain: org.recordweb.dev
     EnableNodeOUs: true
     Template:
       Count: 1
