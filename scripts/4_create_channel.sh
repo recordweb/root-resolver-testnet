@@ -20,16 +20,11 @@ echo "✓ Orderer joint den Channel"
 
 echo "==> peer0.org.recordweb.dev joint den Channel..."
 docker exec fabric-cli peer channel join \
-  -e CORE_PEER_ADDRESS=peer0.org.recordweb.dev:7951 \
-  -e CORE_PEER_LOCALMSPID=OrgRecordwebMSP \
-  -e CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org.recordweb.dev/peers/peer0.org.recordweb.dev/tls/ca.crt \
-  -e CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org.recordweb.dev/users/Admin@org.recordweb.dev/msp \
-  fabric-cli peer channel join \
   -b /opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts/genesis.block
 
 echo "==> peer0.swissgov.recordweb.dev joint den Channel..."
 docker exec \
-  -e CORE_PEER_ADDRESS=peer0.swissgov.recordweb.dev:9051 \
+  -e CORE_PEER_ADDRESS=peer0.swissgov.recordweb.dev:9951 \
   -e CORE_PEER_LOCALMSPID=SwissGovOrgMSP \
   -e CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/swissgov.recordweb.dev/peers/peer0.swissgov.recordweb.dev/tls/ca.crt \
   -e CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/swissgov.recordweb.dev/users/Admin@swissgov.recordweb.dev/msp \

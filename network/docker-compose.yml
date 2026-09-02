@@ -101,12 +101,12 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
       - CORE_PEER_ID=peer0.swissgov.recordweb.dev
-      - CORE_PEER_ADDRESS=peer0.swissgov.recordweb.dev:9051
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
+      - CORE_PEER_ADDRESS=peer0.swissgov.recordweb.dev:9951
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9951
       - CORE_PEER_CHAINCODEADDRESS=peer0.swissgov.recordweb.dev:9052
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.swissgov.recordweb.dev:9051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.swissgov.recordweb.dev:9051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.swissgov.recordweb.dev:9951
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.swissgov.recordweb.dev:9951
       - CORE_PEER_LOCALMSPID=SwissGovOrgMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9445
@@ -116,7 +116,7 @@ services:
       - ./crypto-config/peerOrganizations/swissgov.recordweb.dev/peers/peer0.swissgov.recordweb.dev/tls:/etc/hyperledger/fabric/tls
       - peer0_swissgov_data:/var/hyperledger/production
     ports:
-      - "9051:9051"
+      - "9951:9951"
     networks:
       - fabric_net
 

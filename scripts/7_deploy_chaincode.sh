@@ -22,7 +22,7 @@ PEER0_RWORG_ADDR="peer0.org.recordweb.dev:7951"
 PEER0_RWORG_CA="${CRYPTO_DIR}/peerOrganizations/org.recordweb.dev/peers/peer0.org.recordweb.dev/tls/ca.crt"
 PEER0_RWORG_ADMIN_MSP="${CRYPTO_DIR}/peerOrganizations/org.recordweb.dev/users/Admin@org.recordweb.dev/msp"
 
-PEER0_SWGOV_ADDR="peer0.swissgov.recordweb.dev:9051"
+PEER0_SWGOV_ADDR="peer0.swissgov.recordweb.dev:9951"
 PEER0_SWGOV_CA="${CRYPTO_DIR}/peerOrganizations/swissgov.recordweb.dev/peers/peer0.swissgov.recordweb.dev/tls/ca.crt"
 PEER0_SWGOV_ADMIN_MSP="${CRYPTO_DIR}/peerOrganizations/swissgov.recordweb.dev/users/Admin@swissgov.recordweb.dev/msp"
 
