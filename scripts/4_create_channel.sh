@@ -11,7 +11,7 @@ echo "==> Channel '$CHANNEL_NAME' via osnadmin erstellen..."
 docker exec fabric-cli osnadmin channel join \
   --channelID $CHANNEL_NAME \
   --config-block /opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts/genesis.block \
-  -o orderer.orderer.recordweb.dev:7053 \
+  -o orderer.orderer.recordweb.dev:7953 \
   --ca-file     /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/orderer.recordweb.dev/tlsca/tlsca.orderer.recordweb.dev-cert.pem \
   --client-cert /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/orderer.recordweb.dev/users/Admin@orderer.recordweb.dev/tls/client.crt \
   --client-key  /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/orderer.recordweb.dev/users/Admin@orderer.recordweb.dev/tls/client.key
