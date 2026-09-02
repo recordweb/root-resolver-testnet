@@ -136,7 +136,7 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.dev/peers/peer0.recordweb.dev/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.dev/peers/peer0.recordweb.dev/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.dev/peers/peer0.recordweb.dev/tls/ca.crt
-      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.dev/users/Admin@recordweb.dev/msp
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/recordweb.dev/users/Admin@org.recordweb.dev/msp
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
@@ -170,8 +170,8 @@ services:
       - MSP_ID=RecordWebOrgMSP
       # Krypto-Material wird read-only unter /app/crypto gemountet (siehe volumes).
       - PEER_TLS_CA_PATH=/app/crypto/peerOrganizations/recordweb.dev/peers/peer0.recordweb.dev/tls/ca.crt
-      - CERT_PATH=/app/crypto/peerOrganizations/recordweb.dev/users/Admin@recordweb.dev/msp/signcerts/Admin@recordweb.dev-cert.pem
-      - KEY_PATH=/app/crypto/peerOrganizations/recordweb.dev/users/Admin@recordweb.dev/msp/keystore
+      - CERT_PATH=/app/crypto/peerOrganizations/recordweb.dev/users/Admin@org.recordweb.dev/msp/signcerts/Admin@org.recordweb.dev-cert.pem
+      - KEY_PATH=/app/crypto/peerOrganizations/recordweb.dev/users/Admin@org.recordweb.dev/msp/keystore
       - FRONTEND_DIR=/app/frontend
     volumes:
       # cryptogen-Material (network/crypto-config) read-only ins Image.
